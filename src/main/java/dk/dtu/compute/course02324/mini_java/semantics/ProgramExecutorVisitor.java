@@ -185,7 +185,22 @@ public class ProgramExecutorVisitor extends ProgramVisitor {
 
     @Override
     public void visit(WhileLoop whileLoop) {
-        whileLoop.expression.accept(this);
+        while (true) {
+            // Vi starter en uendelig løkke – den stoppes manuelt senere med break
+            whileLoop.expression.accept(this);
+            // Vi evaluerer loop-betingelsen, fx udtrykket i + j, og bruger accept(this) til at fortolke det
+            Number value = values.get(whileLoop.expression);
+            // Vi henter den beregnede værdi af udtrykket fra values-mappen.
+
+            // hvis værdien er < 0 så skal løkken stop med brak.
+            if (value instanceof Integer && value.intValue() < 0) break;
+            if (value instanceof Float && value.floatValue() < 0) break;
+
+            //ellers vi udfører loppens indhold
+            whileLoop.statement.accept(this);
+        }
+    }
+
 
         /* TODO Assignment 6b: Here some code which actually executes the
                 while loop must be added. This code should get the current value
@@ -201,7 +216,7 @@ public class ProgramExecutorVisitor extends ProgramVisitor {
                 looking them up in the values Map.
          */
 
-    }
+
 
     @Override
     public void visit(Assignment assignment) {
