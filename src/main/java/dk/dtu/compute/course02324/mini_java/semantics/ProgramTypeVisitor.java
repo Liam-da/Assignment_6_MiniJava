@@ -21,7 +21,13 @@ public class ProgramTypeVisitor extends ProgramVisitor {
      *      operators make sense.
      */
 
-    // opgave 4 af 6a er lavet som følge:
+    /**
+     * A map that shows which operand types are allowed for each operator.
+     * <p>
+     * Each operator (like PLUS2, MINUS2, etc.) has a list of supported operand types (like INT or FLOAT).
+     * For example, both addition and subtraction can work with INT or FLOAT, while modulo only works with INT.
+     * </p>
+     */
     final private Map<Operator,List<Type>> operatorTypes = Map.ofEntries(
             entry(PLUS2, List.of(INT, FLOAT)),
             entry(MINUS2, List.of(INT, FLOAT)),
@@ -79,6 +85,18 @@ public class ProgramTypeVisitor extends ProgramVisitor {
         // (which the above accept actually does).
     }
 
+    /**
+     * Visits a {@link WhileLoop}, evaluates its condition expression, and checks its type.
+     * <p>
+     * This method first evaluates the expression of the while loop. It then checks if the
+     * expression is of type {@code INT}. If the type is incorrect, it adds a problem message
+     * to the {@code problems} list. After evaluating the expression, it processes the statement
+     * inside the loop.
+     * </p>
+     *
+     * @param whileLoop the  WhileLoop to be processed
+     * @throws RuntimeException if the expression type is not {@code INT}
+     */
     public void visit(WhileLoop whileLoop) {
         whileLoop.expression.accept(this);
         whileLoop.statement.accept(this);

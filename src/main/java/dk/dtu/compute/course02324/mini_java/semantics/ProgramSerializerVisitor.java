@@ -26,6 +26,16 @@ public class ProgramSerializerVisitor extends ProgramVisitor  {
         statement.accept(this);
     }
 
+    /**
+     * Visits a sequence of statements and processes each one.
+     * <p>
+     * This method iterates through each statement in the sequence, adds proper indentation,
+     * and recursively processes each statement. It also ensures that while loops do not end
+     * with a semicolon and adds a semicolon after other statements.
+     * </p>
+     *
+     * @param sequence the sequence of statements to be processed
+     */
     @Override
     public void visit(Sequence sequence) {
         for (Statement statement: sequence.statements) {
@@ -45,6 +55,15 @@ public class ProgramSerializerVisitor extends ProgramVisitor  {
         }
     }
 
+    /**
+     * Generates the Java code for a variable declaration.
+     * <p>
+     * This method adds the type and variable name to the result. If there is an expression,
+     * it adds the assignment part of the declaration as well.
+     * </p>
+     *
+     * @param declaration the declaration to process
+     */
     @Override
     public void visit(Declaration declaration) {
         result.append(declaration.type.getName() + " " + declaration.variable.name);
@@ -54,6 +73,15 @@ public class ProgramSerializerVisitor extends ProgramVisitor  {
         }
     }
 
+    /**
+     * Generates the Java code for a print statement.
+     * <p>
+     * This method adds the prefix of the print statement and, if there's an expression,
+     * it adds that as well to form the full print statement.
+     * </p>
+     *
+     * @param printStatement the print statement to process
+     */
     @Override
     public void visit(PrintStatement printStatement) {
         result.append("System.out.println(\"" + printStatement.prefix + "\"");
@@ -64,6 +92,15 @@ public class ProgramSerializerVisitor extends ProgramVisitor  {
         result.append(")");
     }
 
+    /**
+     * Generates the Java code for a while loop.
+     * <p>
+     * This method generates the while loop syntax, including the condition and the body of the loop.
+     * It also handles proper indentation for the loop body.
+     * </p>
+     *
+     * @param whileLoop the while loop to process
+     */
     @Override
     public void visit(WhileLoop whileLoop) {
         result.append("while ( ");

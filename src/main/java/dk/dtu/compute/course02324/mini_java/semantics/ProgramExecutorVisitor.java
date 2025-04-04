@@ -13,83 +13,107 @@ import static dk.dtu.compute.course02324.mini_java.utils.Shortcuts.FLOAT;
 import static dk.dtu.compute.course02324.mini_java.utils.Shortcuts.INT;
 import static java.util.Map.entry;
 
+/**
+ * Executes a Mini-Java program by evaluating expressions and executing statements.
+ * <p>
+ * This class extends {@link ProgramVisitor} and interprets a Mini-Java program
+ * by computing values for expressions and handling different arithmetic operations.
+ * It maintains a mapping of expression values and supports operations such as
+ * addition, subtraction, multiplication, division, and modulo for integers and floats.
+ * </p>
+ */
 public class ProgramExecutorVisitor extends ProgramVisitor {
 
     final private ProgramTypeVisitor pv;
 
     final public Map<Expression, Number> values = new HashMap<>();
 
+    // Arithmetic operations for integers and floats
+
+    /** Adds two integers. */
     private Function<List<Number>, Number> plus2int = args -> {
         int arg1 = args.get(0).intValue();
         int arg2 = args.get(1).intValue();
         return arg1 + arg2;
     };
+    /** Returns a single integer without modification. */
     private Function<List<Number>, Number> plus1int = args -> {
         int arg1 = args.get(0).intValue();
 
         return arg1;
     };
 
+    /** Adds two floating-point numbers. */
     private Function<List<Number>, Number> plus2float = args -> {
         float arg1 = args.get(0).floatValue();
         float arg2 = args.get(1).floatValue();
         return arg1 + arg2;
     };
 
+    /** Returns a single floating-point number without modification. */
     private Function<List<Number>, Number> plus1float = args -> {
         float arg1 = args.get(0).floatValue();
 
         return arg1;
     };
 
+    /** Subtracts two floating-point numbers. */
     private Function<List<Number>, Number> minus2float = args -> {
         float arg1 = args.get(0).floatValue();
         float arg2 = args.get(1).floatValue();
         return arg1 - arg2;
     };
 
+    /** Subtracts two integers. */
     private Function<List<Number>, Number> minus2int = args -> {
         int arg1 = args.get(0).intValue();
         int arg2 = args.get(1).intValue();
         return arg1 - arg2;
     };
 
+    /** Negates an integer. */
     private Function<List<Number>, Number> minus1int = args -> {
         int arg1 = args.get(0).intValue();
 
         return -arg1;
     };
 
+    /** Negates a floating-point number. */
     private Function<List<Number>, Number> minus1float = args -> {
         float arg1 = args.get(0).floatValue();
 
         return -arg1;
     };
 
+    /** Multiplies two integers. */
     private Function<List<Number>, Number> multint = args -> {
         int arg1 = args.get(0).intValue();
         int arg2 = args.get(1).intValue();
         return arg1 * arg2;
     };
 
+    /** Multiplies two floating-point numbers. */
     private Function<List<Number>, Number> multfloat = args -> {
         float arg1 = args.get(0).floatValue();
         float arg2 = args.get(1).floatValue();
         return arg1 * arg2;
     };
 
+    /** Divides two integers (integer division). */
     private Function<List<Number>, Number> divInt = args -> {
         int arg1 = args.get(0).intValue();
         int arg2 = args.get(1).intValue();
         return arg1 / arg2;
     };
 
+    /** Divides two floats (floats division). */
     private Function<List<Number>, Number> divfloat = args -> {
         float arg1 = args.get(0).floatValue();
         float arg2 = args.get(1).floatValue();
         return arg1 / arg2;
     };
 
+    /** Computes the remainder of integer division (modulo operation). */
     private Function<List<Number>, Number> modInt = args -> {
         int arg1 = args.get(0).intValue();
         int arg2 = args.get(1).intValue();
@@ -134,45 +158,71 @@ public class ProgramExecutorVisitor extends ProgramVisitor {
         }
     }
 
+    /**
+     * Visits a {@link PrintStatement} and executes the print operation.
+     * <p>
+     * This method first evaluates the expression in the print statement,
+     * then prints the prefix followed by the current value of the evaluated expression.
+     * </p>
+     *
+     * @param printStatement the {@link PrintStatement} to be executed
+     */
     @Override
     public void visit(PrintStatement printStatement) {
-        printStatement.expression.accept(this);
 
-        /*  Assignment 6a: Here some code which actually executes the
-                print operation must be added. It should actually print out the
-                prefix of the print statement and then the CURRENT value of the
-                expression.
-         */
+        printStatement.expression.accept(this);
 
         System.out.println(printStatement.prefix + values);
 
+
     }
 
+    /**
+     * Visits a {@link WhileLoop} node and executes its logic.
+     * <p>
+     * This method interprets and executes a while-loop structure.
+     * It continuously evaluates the loop condition and executes the loop body
+     * until the condition evaluates to a negative number (stopping the loop).
+     * </p>
+     *
+     * @param whileLoop the {@link WhileLoop} node representing the loop
+     */
     @Override
     public void visit(WhileLoop whileLoop) {
         while (true) {
-            // Vi starter en uendelig løkke – den stoppes manuelt senere med break
+            // Start an infinite loop – it will be stopped manually with a break
             whileLoop.expression.accept(this);
-            // Vi evaluerer loop-betingelsen, fx udtrykket i + j, og bruger accept(this) til at fortolke det
+            // Evaluate the loop condition, e.g., an expression like i + j, using accept(this)
             Number value = values.get(whileLoop.expression);
-            // Vi henter den beregnede værdi af udtrykket fra values-mappen.
+            // Retrieve the computed value of the condition from the values map
 
-            // hvis værdien er < 0 så skal løkken stop med brak.
+            // If the value is negative, break the loop.
             if (value instanceof Integer && value.intValue() < 0) break;
             if (value instanceof Float && value.floatValue() < 0) break;
 
-            //ellers vi udfører loppens indhold
+            // Otherwise, execute the loop body
             whileLoop.statement.accept(this);
         }
     }
 
 
 
-
+    /**
+     * Visits an {@link Assignment} and updates the variable with the evaluated expression result.
+     * <p>
+     * This method first evaluates the right-hand side expression of the assignment.
+     * Then it stores the result both for the assignment itself and for the assigned variable
+     * in the {@code values} map.
+     * </p>
+     *
+     * @param assignment the {@link Assignment} to be executed
+     */
     @Override
     public void visit(Assignment assignment) {
         assignment.expression.accept(this);
         Number result = values.get(assignment.expression);
+
+        // Store the result for the assignment and the variable
         values.put(assignment, result);
         values.put(assignment.variable, result);
     }
@@ -194,21 +244,40 @@ public class ProgramExecutorVisitor extends ProgramVisitor {
         // should have added this value for variable already).
     }
 
+    /**
+     * Visits an {@link OperatorExpression}, evaluates its operands,
+     * applies the corresponding arithmetic function, and stores the result.
+     * <p>
+     * The method retrieves the type of the expression and uses it to look up
+     * the correct function (e.g., addition, multiplication) from {@code operatorFunctions}.
+     * It then evaluates all operand expressions, applies the function, and stores
+     * the final result in the {@code values} map.
+     * </p>
+     *
+     * @param operatorExpression the {@link OperatorExpression} to be evaluated
+     * @throws RuntimeException if the function or any operand value is missing
+     */
     @Override
     public void visit(OperatorExpression operatorExpression) {
         Type type = pv.typeMapping.get(operatorExpression);
+
+        // Get the function map for this operator
         Map<Type, Function<List<Number>, Number>> typeMap = operatorFunctions.get(operatorExpression.operator);
 
+
+        // Retrieve the specific function for the current type
         // Function<List<Number>,Number> function = typeMap != null && type!= null ? typeMap.get(type) : null;
         Function<List<Number>, Number> function = null;
         if (typeMap != null && type != null) {
             function = typeMap.get(type);
         }
 
+        // If no matching function is found, throw an error
         if (function == null) {
             throw new RuntimeException("No function of this type available");
         }
 
+        // Evaluate all operands and collect their values
         List<Number> args = new ArrayList<>();
         for (Expression subexpression : operatorExpression.operands) {
             subexpression.accept(this);
@@ -219,7 +288,10 @@ public class ProgramExecutorVisitor extends ProgramVisitor {
             args.add(arg);
         }
 
+        // Apply the operator function to the evaluated operands
         Number result = function.apply(args);
+
+        // Store the final result
         values.put(operatorExpression, result);
     }
 
