@@ -282,23 +282,27 @@ public class MiniJavaRun {
 
         System.out.println("And now some syntactially wrong examples (crashing) when building statement!");
 
-        Statement statement6 = new Sequence(
-                new Declaration(INT, new Var("i")),
-                new Declaration(
-                        INT,
-                        new Var("j"),
-                        new Assignment(
-                                new Var("i"),
-                                new OperatorExpression(
-                                        PLUS2,
-                                        new IntLiteral(2),
-                                        new Assignment(
-                                                new Var("i"),
-                                                new FloatLiteral(3)),
-                                        new FloatLiteral(3.5f)
-                                        ))
-                )
-        );
+        try {
+            Statement statement6 = new Sequence(
+                    new Declaration(INT, new Var("i")),
+                    new Declaration(
+                            INT,
+                            new Var("j"),
+                            new Assignment(
+                                    new Var("i"),
+                                    new OperatorExpression(
+                                            PLUS2,
+                                            new IntLiteral(2),
+                                            new Assignment(
+                                                    new Var("i"),
+                                                    new FloatLiteral(3)),
+                                            new FloatLiteral(3.5f)
+                                    ))
+                    )
+            );
+        } catch (Exception e){
+            System.out.println("expression is wrong");
+        }
     }
 
 }
