@@ -6,6 +6,8 @@ import dk.dtu.compute.course02324.mini_java.semantics.*;
 import static dk.dtu.compute.course02324.mini_java.utils.Shortcuts.*;
 import static dk.dtu.compute.course02324.mini_java.model.Operator.*;
 
+import dk.dtu.compute.course02324.mini_java.utils.Shortcuts;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -341,6 +343,21 @@ public class TestMiniJava{
             }
         }
         assertEquals(0, variables.size(), "Some variables have not been evaluated");
+    }
+
+    @Test
+    public void testSerializationOfSimpleProgram() {
+        Statement statement = new Sequence(new Declaration(Shortcuts.INT, new Var("i"),
+                new IntLiteral(1)), new Declaration(Shortcuts.INT, new Var("j")), new Assignment(new Var("j"),
+                new OperatorExpression(Operator.PLUS2, new Var("i"), new IntLiteral(2))),
+                new PrintStatement("Value of j: ", new Var("j")));
+        ProgramSerializerVisitor serializer = new ProgramSerializerVisitor();
+        serializer.visit(statement);
+        String serialized = serializer.result();
+        String var10000 = System.lineSeparator();
+        String expected = "int i = 1;" + var10000 + "int j;" + System.lineSeparator() + "j = i + 2;" +
+                System.lineSeparator() + "System.out.println(\"Value of j: \" + j);" + System.lineSeparator();
+        Assertions.assertEquals(expected, serialized, "Serialized output does not match expected output.");
     }
 
 }
