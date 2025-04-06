@@ -1,4 +1,5 @@
-Assignment 6a: We start by building an abstact syntax tree of the mini java progam and made sure to add the missing operators. 
+Assignment 6a: 
+We start by building an abstact syntax tree of the mini java progam and made sure to add the missing operators. 
 We defined the types and evaluations for the unsupported operators Both unary and binary operators got added for both float and int. 
 We created functions for the operators using lambda expressions, making sure the correct arguments and values were there. 
 Creating a new construct to the tree, in which we have a statement and have two parameters. 
